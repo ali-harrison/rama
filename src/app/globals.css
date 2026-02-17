@@ -1,0 +1,103 @@
+@import "tailwindcss";
+
+@theme {
+  --color-linen: #E8E0D0;
+  --color-charcoal: #2C2C2C;
+  --color-amber: #C4863A;
+  --color-offwhite: #F5F0E8;
+  --color-shadow: #1A1A1A;
+
+  --font-display: "Cormorant Garamond", serif;
+  --font-mono: "Space Mono", monospace;
+}
+
+/* Base resets */
+html {
+  scroll-behavior: auto; /* GSAP handles smooth scroll */
+}
+
+body {
+  background-color: var(--color-offwhite);
+  color: var(--color-charcoal);
+  font-family: var(--font-mono);
+  overflow-x: hidden;
+}
+
+::selection {
+  background-color: var(--color-amber);
+  color: var(--color-offwhite);
+}
+
+/* Utility classes for the raw aesthetic */
+.font-display {
+  font-family: var(--font-display);
+}
+
+.font-utility {
+  font-family: var(--font-mono);
+}
+
+/* Intentionally rough border style */
+.border-raw {
+  border: 1px solid var(--color-charcoal);
+  border-width: 1px 1px 2px 1px;
+}
+
+/* Grain overlay canvas sits fixed across everything */
+#grain-canvas {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100vw;
+  height: 100vh;
+  pointer-events: none;
+  z-index: 9999;
+  opacity: 0.06;
+}
+
+/* Light bleed effect */
+.light-bleed {
+  position: absolute;
+  border-radius: 50%;
+  background: radial-gradient(circle, rgba(196, 134, 58, 0.3) 0%, transparent 70%);
+  filter: blur(80px);
+  pointer-events: none;
+}
+
+/* Garment card grain overlay */
+.card-grain {
+  background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 256 256' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='noise'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23noise)' opacity='0.4'/%3E%3C/svg%3E");
+  background-size: 128px 128px;
+}
+
+/* Misaligned label effect */
+.label-raw {
+  font-family: var(--font-mono);
+  font-size: 0.65rem;
+  letter-spacing: 0.15em;
+  text-transform: uppercase;
+  color: var(--color-charcoal);
+  opacity: 0.7;
+}
+
+/* CTA input styling */
+.input-raw {
+  background: transparent;
+  border: none;
+  border-bottom: 1px solid var(--color-charcoal);
+  padding: 0.75rem 0;
+  font-family: var(--font-mono);
+  font-size: 0.85rem;
+  color: var(--color-charcoal);
+  outline: none;
+  width: 100%;
+}
+
+.input-raw::placeholder {
+  color: var(--color-charcoal);
+  opacity: 0.4;
+}
+
+.input-raw:focus {
+  border-bottom-color: var(--color-amber);
+}
