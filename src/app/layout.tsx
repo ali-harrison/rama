@@ -1,18 +1,19 @@
 import type { Metadata } from "next";
-import { Cormorant_Garamond, Space_Mono } from "next/font/google";
+import { Fraunces, Space_Mono } from "next/font/google";
 import "./globals.css";
 
-const cormorant = Cormorant_Garamond({
+const fraunces = Fraunces({
   subsets: ["latin"],
-  weight: ["300", "400", "500", "600", "700"],
-  variable: "--font-cormorant",
+  variable: "--font-display",
+  style: ["normal", "italic"],
+  axes: ["SOFT", "WONK"],
   display: "swap",
 });
 
 const spaceMono = Space_Mono({
   subsets: ["latin"],
+  variable: "--font-mono",
   weight: ["400", "700"],
-  variable: "--font-space-mono",
   display: "swap",
 });
 
@@ -28,7 +29,7 @@ export default function RootLayout({
   children: React.ReactNode;
 }) {
   return (
-    <html lang="en" className={`${cormorant.variable} ${spaceMono.variable}`}>
+    <html lang="en" className={`${fraunces.variable} ${spaceMono.variable}`}>
       <body>{children}</body>
     </html>
   );
