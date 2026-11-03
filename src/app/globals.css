@@ -1,13 +1,35 @@
 @import "tailwindcss";
 
-@theme {
-  --color-linen: #E8E0D0;
-  --color-charcoal: #2C2C2C;
+@theme inline {
+  --font-sans: var(--font-hanken), ui-sans-serif, system-ui, sans-serif;
+  --font-script: var(--font-madi), cursive;
+  --font-mono: var(--font-plex), ui-monospace, monospace;
+  --color-ink: var(--ink);
+  --color-paper: var(--paper);
   --color-amber: #C4863A;
-  --color-offwhite: #F5F0E8;
-  --color-shadow: #1A1A1A;
-  --font-display: "Fraunces", serif;
-  --font-mono: "Space Mono", monospace;
+}
+
+/* Sky + chrome are driven by <Sky /> as the day moves; these are first light.
+   Chapters pin their own --ink. */
+:root {
+  --sky-top: #AEB8C2;
+  --sky-bottom: #EDE6DB;
+  --ink: #1F1E1C;
+  --chrome: #1F1E1C;
+  --chrome-mid: #1F1E1C;
+  --paper: #F3EEE4;
+  --margin: 16px;
+  --grid-minor: color-mix(in srgb, var(--ink) 6%, transparent);
+  --grid-major: color-mix(in srgb, var(--ink) 12%, transparent);
+}
+
+@media (min-width: 768px) {
+  :root { --margin: 32px; }
+}
+
+/* Wide enough for the tape ruler to live in the left margin */
+@media (min-width: 1280px) {
+  :root { --margin: clamp(32px, 8.5vw, 128px); }
 }
 
 html {
@@ -15,135 +37,249 @@ html {
 }
 
 body {
-  background-color: var(--color-offwhite);
-  color: var(--color-charcoal);
-  font-family: var(--font-mono);
+  background-color: var(--sky-bottom);
+  color: var(--ink);
+  font-family: var(--font-sans);
   overflow-x: hidden;
+  -webkit-font-smoothing: antialiased;
 }
 
 ::selection {
   background-color: var(--color-amber);
-  color: var(--color-offwhite);
+  color: #F3EEE4;
 }
 
-.font-display {
-  font-family: var(--font-display);
+/* Lenis */
+html.lenis, html.lenis body { height: auto; }
+.lenis.lenis-smooth { scroll-behavior: auto !important; }
+.lenis.lenis-stopped { overflow: hidden; }
+
+/* Elements wait for their reveal — only when motion is allowed (class set in layout) */
+.motion [data-reveal],
+.motion .hero-letter {
+  visibility: hidden;
 }
 
-.font-utility {
-  font-family: var(--font-mono);
-}
+/* ---------- Atmosphere ---------- */
 
-/* Intentionally rough border — asymmetric weight reads as handmade */
-.border-raw {
-  border: 1px solid var(--color-charcoal);
-  border-width: 1px 1px 2px 1px;
+.sky {
+  position: fixed;
+  inset: 0;
+  z-index: 0;
+  background: linear-gradient(to bottom, var(--sky-top), var(--sky-bottom));
 }
 
 /* CSS grain overlay — static SVG noise, zero RAF cost */
 .grain {
   position: fixed;
   inset: 0;
-  z-index: 9999;
+  z-index: 80;
   pointer-events: none;
-  opacity: 0.045;
+  opacity: 0.04;
   background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 256 256' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='noise'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23noise)'/%3E%3C/svg%3E");
   background-size: 256px 256px;
-  background-repeat: repeat;
 }
 
-/* Light bleed — amber glow pushed to corners */
-.light-bleed {
-  position: absolute;
-  background: radial-gradient(circle, rgba(196, 134, 58, 0.3) 0%, transparent 70%);
-  filter: blur(80px);
-  pointer-events: none;
-}
+/* Component classes live in a layer so Tailwind utilities can override them */
+@layer components {
+  /* One grade over every photo so mixed sources read as one shoot */
+  .graded {
+    filter: saturate(0.78) sepia(0.14) contrast(1.03);
+  }
 
-/* Garment card grain overlay */
-.card-grain {
-  background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 256 256' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='noise'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23noise)' opacity='0.4'/%3E%3C/svg%3E");
-  background-size: 128px 128px;
-}
+  /* ---------- Pattern-sheet grid ---------- */
 
-/* Label — colour is set per-context via utility class, not here */
-.label-raw {
-  font-family: var(--font-mono);
-  font-size: 0.65rem;
-  letter-spacing: 0.15em;
-  text-transform: uppercase;
-  opacity: 0.7;
-}
+  .gridline {
+    position: absolute;
+    top: 0;
+    bottom: 0;
+    width: 1px;
+    background: var(--grid-minor);
+  }
 
-/* CTA input */
-.input-raw {
-  background: transparent;
-  border: none;
-  border-bottom: 1px solid var(--color-charcoal);
-  padding: 0.75rem 0;
-  font-family: var(--font-mono);
-  font-size: 0.85rem;
-  color: var(--color-charcoal);
-  outline: none;
-  width: 100%;
-}
+  .gridline-major {
+    background: var(--grid-major);
+  }
 
-.input-raw::placeholder {
-  color: var(--color-charcoal);
-  opacity: 0.4;
-}
+  .crosshair {
+    position: absolute;
+    top: 0;
+    width: 11px;
+    height: 11px;
+    transform: translate(-50%, -50%);
+    color: color-mix(in srgb, var(--ink) 55%, transparent);
+    background:
+      linear-gradient(currentColor, currentColor) center / 1px 100% no-repeat,
+      linear-gradient(currentColor, currentColor) center / 100% 1px no-repeat;
+  }
 
-.input-raw:focus {
-  border-bottom-color: var(--color-amber);
-}
+  /* Registration marks — corner ticks sitting just outside a frame */
+  .reg {
+    position: absolute;
+    width: 9px;
+    height: 9px;
+    pointer-events: none;
+    color: color-mix(in srgb, var(--ink) 50%, transparent);
+  }
+  .reg-tl { top: -6px; left: -6px; border-top: 1px solid; border-left: 1px solid; }
+  .reg-tr { top: -6px; right: -6px; border-top: 1px solid; border-right: 1px solid; }
+  .reg-bl { bottom: -6px; left: -6px; border-bottom: 1px solid; border-left: 1px solid; }
+  .reg-br { bottom: -6px; right: -6px; border-bottom: 1px solid; border-right: 1px solid; }
 
-/* Nav link — M6 split hover, CSS only */
-.nav-link {
-  position: relative;
-  overflow: hidden;
-  display: inline-block;
-  cursor: pointer;
-}
+  /* Fixed UI over the scrolling day — ink flips with the chapter under the header */
+  .chrome {
+    color: var(--chrome);
+    transition: color 0.5s ease;
+  }
+  .chrome-mid {
+    color: var(--chrome-mid);
+    transition: color 0.5s ease;
+  }
 
-.nav-link .nav-link-top {
-  display: block;
-  transition: transform 0.45s cubic-bezier(0.16, 1, 0.3, 1);
-}
+  /* No need to point at the lookbook from inside it */
+  .lookbook-link {
+    transition: opacity 0.4s ease;
+  }
+  [data-chapter="lookbook"] .lookbook-link {
+    opacity: 0;
+    pointer-events: none;
+  }
 
-.nav-link .nav-link-bottom {
-  position: absolute;
-  top: 0;
-  left: 0;
-  display: block;
-  transform: translateY(105%);
-  transition: transform 0.45s cubic-bezier(0.16, 1, 0.3, 1);
-}
+  /* Tailor's tape — minor tick every 6px, major every 30px */
+  .tape {
+    width: 14px;
+    opacity: 0.45;
+    background-image:
+      repeating-linear-gradient(to bottom, currentColor 0 1px, transparent 1px 30px),
+      repeating-linear-gradient(to bottom, currentColor 0 1px, transparent 1px 6px);
+    background-size: 14px 100%, 7px 100%;
+    background-repeat: no-repeat;
+  }
 
-.nav-link:hover .nav-link-top {
-  transform: translateY(-105%);
-}
+  .ruler-label {
+    position: absolute;
+    left: 24px;
+    transform: translateY(-50%);
+    white-space: nowrap;
+    opacity: 0.45;
+    transition: opacity 0.4s ease, transform 0.5s cubic-bezier(0.16, 1, 0.3, 1);
+  }
+  .ruler-label:hover,
+  .ruler-label.is-active {
+    opacity: 1;
+  }
+  .ruler-label.is-active {
+    transform: translate(6px, -50%);
+  }
 
-.nav-link:hover .nav-link-bottom {
-  transform: translateY(0%);
-}
+  /* ---------- Type ---------- */
 
-/* CTA submit button — underline draws in on hover */
-.btn-underline {
-  position: relative;
-  display: inline-block;
-}
+  .script {
+    font-family: var(--font-script);
+    font-size: clamp(3.25rem, 6vw, 5.75rem);
+    line-height: 1;
+    /* room for swashes so the write-on clip never crops them */
+    padding: 0.12em 0.4em;
+    margin-bottom: -0.26em;
+    position: relative;
+    z-index: 1;
+  }
 
-.btn-underline::after {
-  content: '';
-  position: absolute;
-  bottom: -2px;
-  left: 0;
-  width: 0;
-  height: 1px;
-  background-color: var(--color-charcoal);
-  transition: width 0.4s ease-out;
-}
+  .caps-heading {
+    font-weight: 400;
+    font-size: clamp(1.75rem, 3.3vw, 3rem);
+    line-height: 1.06;
+    letter-spacing: -0.005em;
+    text-transform: uppercase;
+  }
 
-.btn-underline:hover::after {
-  width: 100%;
+  .caps-body {
+    font-size: 0.8125rem;
+    line-height: 1.6;
+    letter-spacing: 0.03em;
+    text-transform: uppercase;
+  }
+
+  .mono-label {
+    font-family: var(--font-mono);
+    font-size: 10px;
+    letter-spacing: 0.14em;
+    line-height: 1.4;
+    text-transform: uppercase;
+  }
+
+  .wordmark {
+    font-weight: 500;
+    font-size: 15px;
+    letter-spacing: 0.34em;
+    padding-left: 0.34em;
+  }
+
+  /* ---------- Controls ---------- */
+
+  .btn-dot {
+    display: inline-flex;
+    align-items: center;
+    gap: 1.1rem;
+    padding: 0.85rem 1rem 0.85rem 1.15rem;
+    border-radius: 2px;
+    background: var(--ink);
+    color: var(--paper);
+    font-size: 0.95rem;
+    letter-spacing: 0.005em;
+    cursor: pointer;
+    transition: background-color 0.4s ease;
+  }
+  .btn-dot:hover {
+    background: color-mix(in srgb, var(--ink) 86%, var(--color-amber));
+  }
+
+  .dot {
+    width: 6px;
+    height: 6px;
+    border-radius: 999px;
+    background: currentColor;
+    transition: transform 0.45s cubic-bezier(0.16, 1, 0.3, 1), background-color 0.3s ease;
+  }
+  .btn-dot:hover .dot,
+  .link-dot:hover .dot {
+    transform: scale(1.8);
+    background: var(--color-amber);
+  }
+
+  .link-dot {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.6rem;
+  }
+
+  .input-line {
+    width: 100%;
+    background: transparent;
+    border: none;
+    border-bottom: 1px solid color-mix(in srgb, var(--ink) 55%, transparent);
+    padding: 0.75rem 0;
+    font-family: var(--font-mono);
+    font-size: 12px;
+    letter-spacing: 0.08em;
+    text-align: center;
+    color: var(--ink);
+    outline: none;
+    transition: border-color 0.3s ease;
+  }
+  .input-line::placeholder {
+    color: var(--ink);
+    opacity: 0.55;
+    text-transform: uppercase;
+  }
+  .input-line:focus {
+    border-bottom-color: var(--color-amber);
+  }
+
+  .fade-in {
+    animation: fade-in 0.8s ease both;
+  }
+  @keyframes fade-in {
+    from { opacity: 0; transform: translateY(8px); }
+  }
 }

@@ -1,21 +1,31 @@
+import { SmoothScroll } from "@/components/SmoothScroll";
+import { Sky } from "@/components/Sky";
+import { GridLines } from "@/components/GridLines";
 import { Grain } from "@/components/Grain";
-import { Nav } from "@/components/Nav";
-import { Hero } from "@/components/Hero";
-import { Philosophy } from "@/components/Philosophy";
+import { Header } from "@/components/Header";
+import { Ruler } from "@/components/Ruler";
+import { FirstLight } from "@/components/FirstLight";
+import { Manifesto } from "@/components/Manifesto";
 import { Collection } from "@/components/Collection";
-import { Process } from "@/components/Process";
-import { CTA } from "@/components/CTA";
+import { Workshop } from "@/components/Workshop";
+import { Lookbook } from "@/components/Lookbook";
 
 export default function Home() {
   return (
     <>
+      <SmoothScroll />
+      <Sky />
+      <GridLines />
       <Grain />
-      <Nav />
-      <Hero />
-      <Philosophy />
-      <Collection />
-      <Process />
-      <CTA />
+      <Header />
+      <Ruler />
+      <main className="relative z-[2]">
+        <FirstLight />
+        <Manifesto />
+        <Collection />
+        <Workshop />
+        <Lookbook />
+      </main>
     </>
   );
 }

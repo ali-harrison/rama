@@ -1,19 +1,24 @@
 import type { Metadata } from "next";
-import { Fraunces, Space_Mono } from "next/font/google";
+import { Hanken_Grotesk, IBM_Plex_Mono, Ms_Madi } from "next/font/google";
 import "./globals.css";
 
-const fraunces = Fraunces({
+const hanken = Hanken_Grotesk({
   subsets: ["latin"],
-  variable: "--font-display",
-  style: ["normal", "italic"],
-  axes: ["SOFT", "WONK"],
+  variable: "--font-hanken",
   display: "swap",
 });
 
-const spaceMono = Space_Mono({
+const madi = Ms_Madi({
   subsets: ["latin"],
-  variable: "--font-mono",
-  weight: ["400", "700"],
+  weight: "400",
+  variable: "--font-madi",
+  display: "swap",
+});
+
+const plex = IBM_Plex_Mono({
+  subsets: ["latin"],
+  weight: ["400", "500"],
+  variable: "--font-plex",
   display: "swap",
 });
 
@@ -23,13 +28,23 @@ export const metadata: Metadata = {
     "Raw construction. Exposed seams. Natural fabrics that age with wear. Light that reveals imperfection, not perfection.",
 };
 
+// Runs before paint so reveal targets start hidden instead of flashing in
+const MOTION_FLAG = `if(matchMedia('(prefers-reduced-motion: no-preference)').matches)document.documentElement.classList.add('motion')`;
+
 export default function RootLayout({
   children,
 }: {
   children: React.ReactNode;
 }) {
   return (
-    <html lang="en" className={`${fraunces.variable} ${spaceMono.variable}`}>
+    <html
+      lang="en"
+      className={`${hanken.variable} ${madi.variable} ${plex.variable}`}
+      suppressHydrationWarning
+    >
+      <head>
+        <script dangerouslySetInnerHTML={{ __html: MOTION_FLAG }} />
+      </head>
       <body>{children}</body>
     </html>
   );
