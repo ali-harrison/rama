@@ -1,3 +1,5 @@
+![The RAMA homepage at first light, with the title over a pale sky between three photos.](docs/screenshot.jpg)
+
 # RAMA
 
 A concept site for a clothing label built around raw construction and exposed seams. The page runs through one day of light, from first light at 05:42 through to after dark, and the sky changes as you scroll.
